@@ -3,16 +3,12 @@ Polymer
 
   hostAttributes:
     class: "fit"
-    
+
   properties:
-    path:
-      type: String
-      value: ""
+    path: String
+    import: String
+    name: String
 
-    import:
-      type: String
-      value: ""
-
-    name:
-      type: String
-      value: ""
+  attached: ->
+    @fire 'route-attached'
+    return

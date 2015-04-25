@@ -5,18 +5,12 @@
       "class": "fit"
     },
     properties: {
-      path: {
-        type: String,
-        value: ""
-      },
-      "import": {
-        type: String,
-        value: ""
-      },
-      name: {
-        type: String,
-        value: ""
-      }
+      path: String,
+      "import": String,
+      name: String
+    },
+    attached: function() {
+      this.fire('route-attached');
     }
   });
 

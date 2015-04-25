@@ -27,18 +27,19 @@
   Polymer({
     is: "wxy-router",
     properties: {
-      key: {
-        type: String,
-        value: ""
-      }
+      key: String
+    },
+    listeners: {
+      'route-attached': 'routeAttached'
     },
     attached: function() {
       registerRouter(this);
       this.router = new RouteRecognizer();
       this.previousRoute = void 0;
-      this._AddRoutes();
-      this._OnStateChange();
       window.addEventListener('popstate', this._OnStateChange.bind(this));
+    },
+    routeAttached: function(e) {
+      this._AddRoute(e.target);
     },
     detached: function() {
       deregisterRouter(this);
@@ -60,19 +61,21 @@
         router._OnStateChange(data);
       }
     },
+    _AddRoute: function(route) {
+      this.router.add([
+        {
+          path: route.path,
+          handler: route
+        }
+      ]);
+      this._OnStateChange();
+    },
     _AddRoutes: function() {
-      var handler, handlers, route, routes, _i, _len;
+      var route, routes, _i, _len;
       routes = this.children;
-      handlers = {};
       for (_i = 0, _len = routes.length; _i < _len; _i++) {
         route = routes[_i];
-        handler = handlers[route.path] = route;
-        this.router.add([
-          {
-            path: route.path,
-            handler: handler
-          }
-        ]);
+        this._AddRoute(route);
       }
     },
     _OnStateChange: function(data) {

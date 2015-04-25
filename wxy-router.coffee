@@ -18,17 +18,20 @@ Polymer
   is: "wxy-router"
 
   properties:
-    key:
-      type: String
-      value: ""
+    key: String
+
+  listeners:
+    'route-attached': 'routeAttached'
 
   attached: ->
     registerRouter @
     @router = new RouteRecognizer()
     @previousRoute = undefined
-    @_AddRoutes()
-    @_OnStateChange()
     window.addEventListener 'popstate', @_OnStateChange.bind @
+    return
+
+  routeAttached: (e) ->
+    @_AddRoute e.target
     return
 
   detached: ->
@@ -47,17 +50,18 @@ Polymer
       router._OnStateChange data
     return
 
+  _AddRoute: (route) ->
+    @router.add [
+      path: route.path
+      handler: route
+    ]
+
+    @_OnStateChange()
+    return
+
   _AddRoutes: ->
     routes = @children
-    handlers = {}
-    for route in routes
-      handler = handlers[route.path] = route
-
-      @router.add [
-        path: route.path
-        handler: handler
-      ]
-
+    @_AddRoute route for route in routes
     return
 
   _OnStateChange: (data) ->
