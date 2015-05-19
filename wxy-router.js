@@ -40,6 +40,7 @@
     },
     routeAttached: function(e) {
       this._AddRoute(e.target);
+      e.stopPropagation();
     },
     detached: function() {
       deregisterRouter(this);
