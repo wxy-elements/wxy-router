@@ -32,6 +32,7 @@ Polymer
 
   routeAttached: (e) ->
     @_AddRoute e.target
+    e.stopPropagation()
     return
 
   detached: ->
