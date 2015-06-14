@@ -77,7 +77,7 @@ Polymer
     importUri = match.handler.import
 
     if importUri
-      Polymer.import [importUri], =>
+      @importHref importUri, =>
         @_activate match
         return
     else

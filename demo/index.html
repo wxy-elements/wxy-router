@@ -72,7 +72,7 @@
           <paper-tab path="/contacts/favorites">Favorites</paper-tab>
         </paper-tabs>
         <wxy-router id="router" key="contacts" hash="{{hash}}">
-          <wxy-route path="/contacts/home" name="contacts-home-page"></wxy-route>
+          <wxy-route path="/contacts/home" name="contacts-home-page" import="contacts-home-page.html"></wxy-route>
           <wxy-route path="/contacts/favorites" name="contacts-favorites-page"></wxy-route>
         </wxy-router>
       </template>
@@ -83,11 +83,6 @@
         }
       });
       </script>
-    </dom-module>
-
-    <dom-module id="contacts-home-page">
-      <template><h1>My Contacts</h1><div>This is in a nested router</div><div>Passed data:<span>[[date]]</span></div></template>
-      <script>Polymer({});</script>
     </dom-module>
 
     <dom-module id="contacts-favorites-page">

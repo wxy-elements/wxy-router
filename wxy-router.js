@@ -97,7 +97,7 @@
       var importUri;
       importUri = match.handler["import"];
       if (importUri) {
-        Polymer["import"]([importUri], (function(_this) {
+        this.importHref(importUri, (function(_this) {
           return function() {
             _this._activate(match);
           };
