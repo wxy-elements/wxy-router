@@ -19,20 +19,18 @@ Polymer
 
   properties:
     key: String
+    hash:
+      type: String
+      notify: true
 
   listeners:
-    'route-attached': 'routeAttached'
+    'route-attached': '_routeAttached'
 
   attached: ->
     registerRouter @
     @router = new RouteRecognizer()
     @previousRoute = undefined
-    window.addEventListener 'popstate', @_OnStateChange.bind @
-    return
-
-  routeAttached: (e) ->
-    @_AddRoute e.target
-    e.stopPropagation()
+    window.addEventListener 'popstate', @_onStateChange.bind @
     return
 
   detached: ->
@@ -48,45 +46,46 @@ Polymer
       window.history.pushState null, null, uri
 
     for key, router of routers
-      router._OnStateChange data
+      router._onStateChange data
     return
 
-  _AddRoute: (route) ->
+  _addRoute: (route) ->
     @router.add [
       path: route.path
       handler: route
     ]
 
-    @_OnStateChange()
+    @_onStateChange()
     return
 
-  _AddRoutes: ->
+  _addRoutes: ->
     routes = @children
-    @_AddRoute route for route in routes
+    @_addRoute route for route in routes
     return
 
-  _OnStateChange: (data) ->
-    result = @router.recognize window.location.hash.substring 1
+  _onStateChange: (data) ->
+    @hash = window.location.hash.substring 1
+    result = @router.recognize @hash
     return if not result?.length > 0
     match = result[0]
     return if match.handler is @previousRoute
     match.data = data
-    @_Import match
+    @_import match
     return
 
-  _Import: (match) ->
+  _import: (match) ->
     importUri = match.handler.import
 
     if importUri
       Polymer.import [importUri], =>
-        @_Activate match
+        @_activate match
         return
     else
-      @_Activate match
+      @_activate match
 
     return
 
-  _Activate: (match) ->
+  _activate: (match) ->
     route = match.handler
 
     elementName = route.name
@@ -96,16 +95,21 @@ Polymer
 
     extend customElement, model, match.params, match.data
 
-    @_RemoveContent @previousRoute
+    @_removeContent @previousRoute
     @previousRoute = route
     route.appendChild customElement
     return
 
-  _RemoveContent: (route) ->
+  _removeContent: (route) ->
     return if not route
 
     node = route.firstChild
     while nodeToRemove = route.firstChild
       route.removeChild nodeToRemove
 
+    return
+
+  _routeAttached: (e) ->
+    @_addRoute e.target
+    e.stopPropagation()
     return

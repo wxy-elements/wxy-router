@@ -27,20 +27,20 @@
   Polymer({
     is: "wxy-router",
     properties: {
-      key: String
+      key: String,
+      hash: {
+        type: String,
+        notify: true
+      }
     },
     listeners: {
-      'route-attached': 'routeAttached'
+      'route-attached': '_routeAttached'
     },
     attached: function() {
       registerRouter(this);
       this.router = new RouteRecognizer();
       this.previousRoute = void 0;
-      window.addEventListener('popstate', this._OnStateChange.bind(this));
-    },
-    routeAttached: function(e) {
-      this._AddRoute(e.target);
-      e.stopPropagation();
+      window.addEventListener('popstate', this._onStateChange.bind(this));
     },
     detached: function() {
       deregisterRouter(this);
@@ -59,29 +59,30 @@
       }
       for (key in routers) {
         router = routers[key];
-        router._OnStateChange(data);
+        router._onStateChange(data);
       }
     },
-    _AddRoute: function(route) {
+    _addRoute: function(route) {
       this.router.add([
         {
           path: route.path,
           handler: route
         }
       ]);
-      this._OnStateChange();
+      this._onStateChange();
     },
-    _AddRoutes: function() {
+    _addRoutes: function() {
       var route, routes, _i, _len;
       routes = this.children;
       for (_i = 0, _len = routes.length; _i < _len; _i++) {
         route = routes[_i];
-        this._AddRoute(route);
+        this._addRoute(route);
       }
     },
-    _OnStateChange: function(data) {
+    _onStateChange: function(data) {
       var match, result;
-      result = this.router.recognize(window.location.hash.substring(1));
+      this.hash = window.location.hash.substring(1);
+      result = this.router.recognize(this.hash);
       if (!(result != null ? result.length : void 0) > 0) {
         return;
       }
@@ -90,22 +91,22 @@
         return;
       }
       match.data = data;
-      this._Import(match);
+      this._import(match);
     },
-    _Import: function(match) {
+    _import: function(match) {
       var importUri;
       importUri = match.handler["import"];
       if (importUri) {
         Polymer["import"]([importUri], (function(_this) {
           return function() {
-            _this._Activate(match);
+            _this._activate(match);
           };
         })(this));
       } else {
-        this._Activate(match);
+        this._activate(match);
       }
     },
-    _Activate: function(match) {
+    _activate: function(match) {
       var customElement, elementName, model, route;
       route = match.handler;
       elementName = route.name;
@@ -114,11 +115,11 @@
         router: this
       };
       extend(customElement, model, match.params, match.data);
-      this._RemoveContent(this.previousRoute);
+      this._removeContent(this.previousRoute);
       this.previousRoute = route;
       route.appendChild(customElement);
     },
-    _RemoveContent: function(route) {
+    _removeContent: function(route) {
       var node, nodeToRemove;
       if (!route) {
         return;
@@ -127,6 +128,10 @@
       while (nodeToRemove = route.firstChild) {
         route.removeChild(nodeToRemove);
       }
+    },
+    _routeAttached: function(e) {
+      this._addRoute(e.target);
+      e.stopPropagation();
     }
   });
 

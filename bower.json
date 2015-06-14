@@ -16,7 +16,7 @@
     "tests"
   ],
   "dependencies": {
-    "route-recognizer": "~0.1.1",
-    "polymer": "Polymer/polymer#^0.8.0"
+    "route-recognizer": "^0.1.5",
+    "polymer": "Polymer/polymer#^1.0.0"
   }
 }
