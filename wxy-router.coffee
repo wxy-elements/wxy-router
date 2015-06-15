@@ -38,6 +38,8 @@ Polymer
     return
 
   go: (uri, {data, options} = {}) ->
+    hash = window.location.hash.substring 1
+    return if hash is uri
     options ?= {}
     uri = '#' + uri
     if options.replace
