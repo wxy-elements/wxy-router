@@ -46,8 +46,12 @@
       deregisterRouter(this);
     },
     go: function(uri, _arg) {
-      var data, key, options, router, _ref;
+      var data, hash, key, options, router, _ref;
       _ref = _arg != null ? _arg : {}, data = _ref.data, options = _ref.options;
+      hash = window.location.hash.substring(1);
+      if (hash === uri) {
+        return;
+      }
       if (options == null) {
         options = {};
       }
